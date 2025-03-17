@@ -5,10 +5,11 @@ import { generateOTP } from '../utils/otpGenerator.js';
 import { createUserSchema, updateUserSchema } from '../validation/userValidation.js';
 import bcrypt from "bcrypt";
 import cron from 'node-cron';
+
 export const createUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-    
+
         await createUserSchema.validate({ name, email, password });
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
@@ -191,6 +192,7 @@ export const newPassword = async (req, res) => {
     }
 }
 
+// update password using oldpassword
 export const updatePassword = async (req, res) => {
     const { email, oldpassword, newPassword } = req.body;
     try {
@@ -250,20 +252,14 @@ const deleteUnverifiedUsers = async () => {
 };
 
 cron.schedule('0 0 * * *', deleteUnverifiedUsers); // Har minute chalega
-console.log('Cron job running at 12 AM every day'); 
-
-
-
-
-
-
-
-
-
+console.log('Cron job running at 12 AM every day');
 
 
 ////////////////////////////////////////////////////////
+
+
 // this code is for fun only
+
 
 //     // Check if password already exists in the database
 //     const users = await User.findAll();
@@ -283,4 +279,6 @@ console.log('Cron job running at 12 AM every day');
 //             message: `This password is already used by ${existingUserEmail}. Please choose a different one.`,
 //         });
 //     }
+
+
 ///////////////////////////////////////////////////////////////

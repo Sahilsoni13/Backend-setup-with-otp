@@ -38,6 +38,9 @@ if (!fs.existsSync(uploadPath)) {
 app.get("/", (req, res) => {
   res.send("Server is ready");
 });
+app.get("/1", (req, res) => {
+  res.send("Server is ready 1");
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
