@@ -8,6 +8,7 @@ import cron from 'node-cron';
 export const createUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
+    
         await createUserSchema.validate({ name, email, password });
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
@@ -68,8 +69,8 @@ export const getUsers = async (req, res) => {
 // register with otp
 export const registerOtp = async (req, res) => {
     const { name, email, password } = req.body;
-const files = req.files;
-console.log(files, typeof files,"files")
+    const files = req.files;
+    console.log(files, typeof files, "files")
     try {
         await createUserSchema.validate({ name, email, password });
         const existingUser = await User.findOne({ where: { email } });
@@ -104,7 +105,7 @@ console.log(files, typeof files,"files")
             password: hashedPassword,
             otp,
             otpExpires,
-            files:filePaths
+            files: filePaths
         });
 
         res.status(201).json({ message: 'User registered. OTP sent on email', userId: user.id });
@@ -117,14 +118,14 @@ console.log(files, typeof files,"files")
         }
         res.status(500).json({ message: error });
     }
-}; 
+};
 
 // verify register with otp
 export const verifyRegister = async (req, res) => {
     const { email, otp } = req.body;
     console.log("Received Email:", email);
     console.log("Received OTP:", otp);
-    
+
     try {
         const user = await User.findOne({ where: { email } });
         if (!user) {
@@ -135,9 +136,9 @@ export const verifyRegister = async (req, res) => {
             return res.status(400).json({ message: 'Invalid or expired OTP' });
         }
 
-        user.isVerified = true; 
-        user.otp = null; 
-        user.otpExpires = null; 
+        user.isVerified = true;
+        user.otp = null;
+        user.otpExpires = null;
         await user.save();
 
         res.status(200).json({ message: 'Email verified successfully' });
@@ -154,7 +155,7 @@ export const forgetOtp = async (req, res) => {
         const { email } = req.body;
         const user = await User.findOne({ where: { email } });
         if (!user) {
-        return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "User not found" });
         }
         const otp = generateOTP();
         const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
@@ -251,3 +252,36 @@ const deleteUnverifiedUsers = async () => {
 
 cron.schedule('0 0 * * *', deleteUnverifiedUsers); // Har minute chalega
 console.log('Cron job running at 12 AM every day'); 
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////
+// this code is for fun only
+
+//     // Check if password already exists in the database
+//     const users = await User.findAll();
+//     let existingUserEmail = null;
+
+//     for (let user of users) {
+//         const isMatch = await bcrypt.compare(password, user.password);
+//         if (isMatch) {
+//             existingUserEmail = user.email;
+//             break; // Stop checking if we found a match
+//         }
+//     }
+
+//     // If password is already used, return an error
+//     if (existingUserEmail) {
+//         return res.status(400).json({
+//             message: `This password is already used by ${existingUserEmail}. Please choose a different one.`,
+//         });
+//     }
+///////////////////////////////////////////////////////////////

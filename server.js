@@ -6,6 +6,7 @@ import "./src/model/userModel.js"; // Important to register model
 import fs from 'fs';
 import path from "path";
 import cors from 'cors';
+import rateLimit from "express-rate-limit";
 dotenv.config();
 
 const app = express();
