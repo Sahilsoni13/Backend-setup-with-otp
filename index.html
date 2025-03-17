@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTP Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+
+  <div class="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-center text-2xl font-bold mb-4">User Registration</h2>
+
+    <!-- Step 1: Register Form -->
+    <form id="registerForm" class="space-y-4">
+      <input type="text" name="name" placeholder="Name" class="w-full p-2 border rounded" required>
+      <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required>
+      <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded" required>
+      <button type="submit" class="bg-blue-500 text-white w-full p-2 rounded">Register</button>
+    </form>
+    <!-- Step 2: OTP Verification Form -->
+    <form id="otpForm" class="space-y-4 hidden">
+      <input type="text" name="otp" placeholder="Enter OTP" class="w-full p-2 border rounded" required>
+      <button type="submit" class="bg-green-500 text-white w-full p-2 rounded">Verify OTP</button>
+    </form>
+    <h2>All Users</h2>
+    <button id="getUsers">Get Users</button>
+    <ul id="userList"></ul>
+    <div id="message" class="text-center mt-4 text-red-500"></div>
+  </div>
+
+  <script>
+    const registerForm = document.getElementById("registerForm");
+    const otpForm = document.getElementById("otpForm");
+    const message = document.getElementById("message");
+
+    registerForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(registerForm);
+      try {
+        const res = await fetch("http://localhost:5000/api/registerOtp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(Object.fromEntries(formData))
+        });
+        const data = await res.json();
+        if (res.ok) {
+          message.textContent = data.message;
+          otpForm.classList.remove("hidden");
+          registerForm.classList.add("hidden");
+        } else {
+          message.textContent = data.message;
+        }
+      } catch (err) {
+        message.textContent = "Server Error";
+      }
+    };
+
+    otpForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const otp = e.target.otp.value;
+      const email = registerForm.email.value;
+      try {
+        const res = await fetch("http://localhost:5000/api/verifyRegister", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp })
+        });
+        const data = await res.json();
+        message.textContent = res.ok ? data.message : data.message;
+      } catch (err) {
+        message.textContent = "Server Error";
+      }
+    };
+    // Fetch all users
+    document.getElementById('getUsers').addEventListener('click', async function () {
+      const userList = document.getElementById('userList');
+      userList.innerHTML = 'Loading...';
+
+      try {
+        const response = await fetch('http://localhost:5000/api/users'); // Change to your actual API endpoint
+        const users = await response.json();
+        userList.innerHTML = ''; // Clear previous data
+        if (users.length > 0) {
+          users.forEach(user => {
+            const li = document.createElement('li');
+            li.textContent = `${user.id}: ${user.name} (${user.email})`;
+            userList.appendChild(li);
+          });
+        } else {
+          userList.innerHTML = 'No users found.';
+        }
+      } catch (error) {
+        userList.innerHTML = 'Error fetching users.';
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+
+</html>
