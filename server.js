@@ -12,8 +12,8 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 5000; // Corrected PORT
-app.use(cors());
-app.use(helmet());
+app.use(cors()); // Allow only a specific origin
+app.use(helmet()); // Secure HTTP Headers with Helmet
 app.use(express.json());
 
 async function connectDB() {
