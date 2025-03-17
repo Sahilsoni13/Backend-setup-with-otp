@@ -6,13 +6,14 @@ import "./src/model/userModel.js"; // Important to register model
 import fs from 'fs';
 import path from "path";
 import cors from 'cors';
-import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 dotenv.config();
 
 const app = express();
 
 const PORT = process.env.PORT || 5000; // Corrected PORT
-app.use(cors())
+app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
 async function connectDB() {

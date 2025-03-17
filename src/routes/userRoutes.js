@@ -4,14 +4,15 @@ import upload from "../middleware/upload.js";
 import rateLimit from "express-rate-limit";
 
 const router = express.Router();
+// limiter of loggin 15 minutes if he failed to login by 6 try
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 6, // Limit each IP to 5 requests per windowMs
-  message: { message: "Too many login attempts. Try again later." },
+    windowMs: 15 * 60 * 1000,
+    max: 6,
+    message: { message: "Too many login attempts. Try again later." },
 });
 router.get("/users", getUsers);
 router.post("/createUser", createUser);
-router.post("/login",limiter, loginUser)
+router.post("/login", limiter, loginUser)
 router.post("/registerOtp", upload.array('files', 6), registerOtp)
 router.post("/verifyRegister", verifyRegister)
 router.put("/updatePassword", updatePassword);
