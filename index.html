@@ -15,9 +15,9 @@
 
     <!-- Step 1: Register Form -->
     <form id="registerForm" class="space-y-4">
-      <input type="text" name="name" placeholder="Name" class="w-full p-2 border rounded" required>
-      <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required>
-      <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded" required>
+      <input type="text" name="name" placeholder="Name" class="w-full p-2 border rounded outline-none" required>
+      <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded outline-none" required>
+      <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded outline-none" required>
       <button type="submit" class="bg-blue-500 text-white w-full p-2 rounded">Register</button>
     </form>
     <!-- Step 2: OTP Verification Form -->
@@ -70,6 +70,12 @@
         });
         const data = await res.json();
         message.textContent = res.ok ? data.message : data.message;
+        if(res.ok){
+          registerForm.classList.remove("hidden")
+          otpForm.classList.add("hidden")
+          registerForm.reset();
+          message.textContent = "";
+        }
       } catch (err) {
         message.textContent = "Server Error";
       }
